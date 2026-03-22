@@ -41,6 +41,7 @@ export interface ThinkingBudgetsSettings {
 
 export interface MarkdownSettings {
 	codeBlockIndent?: string; // default: "  "
+	textPadding?: number; // default: 1
 }
 
 export type TransportSetting = Transport;
@@ -949,5 +950,9 @@ export class SettingsManager {
 
 	getCodeBlockIndent(): string {
 		return this.settings.markdown?.codeBlockIndent ?? "  ";
+	}
+
+	getTextPadding(): number {
+		return this.settings.markdown?.textPadding ?? 1;
 	}
 }

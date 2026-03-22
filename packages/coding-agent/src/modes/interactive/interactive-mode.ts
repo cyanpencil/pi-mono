@@ -2180,6 +2180,7 @@ export class InteractiveMode {
 						undefined,
 						this.hideThinkingBlock,
 						this.getMarkdownThemeWithSettings(),
+						this.settingsManager.getTextPadding(),
 					);
 					this.streamingMessage = event.message;
 					this.chatContainer.addChild(this.streamingComponent);
@@ -2201,6 +2202,7 @@ export class InteractiveMode {
 									content.arguments,
 									{
 										showImages: this.settingsManager.getShowImages(),
+										textPadding: this.settingsManager.getTextPadding(),
 									},
 									this.getRegisteredToolDefinition(content.name),
 									this.ui,
@@ -2267,6 +2269,7 @@ export class InteractiveMode {
 						event.args,
 						{
 							showImages: this.settingsManager.getShowImages(),
+							textPadding: this.settingsManager.getTextPadding(),
 						},
 						this.getRegisteredToolDefinition(event.toolName),
 						this.ui,
@@ -2510,11 +2513,16 @@ export class InteractiveMode {
 							const userComponent = new UserMessageComponent(
 								skillBlock.userMessage,
 								this.getMarkdownThemeWithSettings(),
+								this.settingsManager.getTextPadding(),
 							);
 							this.chatContainer.addChild(userComponent);
 						}
 					} else {
-						const userComponent = new UserMessageComponent(textContent, this.getMarkdownThemeWithSettings());
+						const userComponent = new UserMessageComponent(
+							textContent,
+							this.getMarkdownThemeWithSettings(),
+							this.settingsManager.getTextPadding(),
+						);
 						this.chatContainer.addChild(userComponent);
 					}
 					if (options?.populateHistory) {
@@ -2528,6 +2536,7 @@ export class InteractiveMode {
 					message,
 					this.hideThinkingBlock,
 					this.getMarkdownThemeWithSettings(),
+					this.settingsManager.getTextPadding(),
 				);
 				this.chatContainer.addChild(assistantComponent);
 				break;
@@ -2569,7 +2578,10 @@ export class InteractiveMode {
 						const component = new ToolExecutionComponent(
 							content.name,
 							content.arguments,
-							{ showImages: this.settingsManager.getShowImages() },
+							{
+								showImages: this.settingsManager.getShowImages(),
+								textPadding: this.settingsManager.getTextPadding(),
+							},
 							this.getRegisteredToolDefinition(content.name),
 							this.ui,
 						);
@@ -3761,9 +3773,14 @@ export class InteractiveMode {
 		const usesCallbackServer = providerInfo?.usesCallbackServer ?? false;
 
 		// Create login dialog component
-		const dialog = new LoginDialogComponent(this.ui, providerId, (_success, _message) => {
-			// Completion handled below
-		});
+		const dialog = new LoginDialogComponent(
+			this.ui,
+			providerId,
+			this.settingsManager.getTextPadding(),
+			(_success, _message) => {
+				// Completion handled below
+			},
+		);
 
 		// Show dialog in editor container
 		this.editorContainer.clear();
@@ -4313,7 +4330,9 @@ export class InteractiveMode {
 		this.chatContainer.addChild(new DynamicBorder());
 		this.chatContainer.addChild(new Text(theme.bold(theme.fg("accent", "Keyboard Shortcuts")), 1, 0));
 		this.chatContainer.addChild(new Spacer(1));
-		this.chatContainer.addChild(new Markdown(hotkeys.trim(), 1, 1, this.getMarkdownThemeWithSettings()));
+		this.chatContainer.addChild(
+			new Markdown(hotkeys.trim(), this.settingsManager.getTextPadding(), 1, this.getMarkdownThemeWithSettings()),
+		);
 		this.chatContainer.addChild(new DynamicBorder());
 		this.ui.requestRender();
 	}

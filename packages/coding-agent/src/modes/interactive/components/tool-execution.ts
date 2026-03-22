@@ -65,6 +65,7 @@ function str(value: unknown): string | null {
 
 export interface ToolExecutionOptions {
 	showImages?: boolean; // default: true (only used if terminal supports images)
+	textPadding?: number; // default: 1
 }
 
 type WriteHighlightCache = {
@@ -87,6 +88,7 @@ export class ToolExecutionComponent extends Container {
 	private args: any;
 	private expanded = false;
 	private showImages: boolean;
+	private textPadding = 1;
 	private isPartial = true;
 	private toolDefinition?: ToolDefinition;
 	private ui: TUI;
@@ -120,6 +122,7 @@ export class ToolExecutionComponent extends Container {
 		this.toolName = toolName;
 		this.args = args;
 		this.showImages = options.showImages ?? true;
+		this.textPadding = options.textPadding ?? 1;
 		this.toolDefinition = toolDefinition;
 		this.ui = ui;
 		this.cwd = cwd;
@@ -127,8 +130,8 @@ export class ToolExecutionComponent extends Container {
 		this.addChild(new Spacer(1));
 
 		// Always create both - contentBox for custom tools/bash, contentText for other built-ins
-		this.contentBox = new Box(1, 1, (text: string) => theme.bg("toolPendingBg", text));
-		this.contentText = new Text("", 1, 1, (text: string) => theme.bg("toolPendingBg", text));
+		this.contentBox = new Box(this.textPadding, 1, (text: string) => theme.bg("toolPendingBg", text));
+		this.contentText = new Text("", this.textPadding, 1, (text: string) => theme.bg("toolPendingBg", text));
 
 		// Use contentBox for bash (visual truncation) or custom tools with custom renderers
 		// Use contentText for built-in tools (including overrides without custom renderers)

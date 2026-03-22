@@ -144,6 +144,7 @@ When a provider requests a retry delay longer than `maxDelayMs` (e.g., Google's 
 | Setting | Type | Default | Description |
 |---------|------|---------|-------------|
 | `markdown.codeBlockIndent` | string | `"  "` | Indentation for code blocks |
+| `markdown.textPadding` | number | `0` | Left padding for all output (assistant messages, tool calls, ...) |
 
 ### Resources
 

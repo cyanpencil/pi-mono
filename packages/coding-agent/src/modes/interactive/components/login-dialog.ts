@@ -12,6 +12,7 @@ export class LoginDialogComponent extends Container implements Focusable {
 	private contentContainer: Container;
 	private input: Input;
 	private tui: TUI;
+	private paddingText = 1;
 	private abortController = new AbortController();
 	private inputResolver?: (value: string) => void;
 	private inputRejecter?: (error: Error) => void;
@@ -29,10 +30,12 @@ export class LoginDialogComponent extends Container implements Focusable {
 	constructor(
 		tui: TUI,
 		providerId: string,
+		paddingText = 1,
 		private onComplete: (success: boolean, message?: string) => void,
 	) {
 		super();
 		this.tui = tui;
+		this.paddingText = paddingText;
 
 		const providerInfo = getOAuthProviders().find((p) => p.id === providerId);
 		const providerName = providerInfo?.name || providerId;
@@ -41,7 +44,7 @@ export class LoginDialogComponent extends Container implements Focusable {
 		this.addChild(new DynamicBorder());
 
 		// Title
-		this.addChild(new Text(theme.fg("warning", `Login to ${providerName}`), 1, 0));
+		this.addChild(new Text(theme.fg("warning", `Login to ${providerName}`), this.paddingText, 0));
 
 		// Dynamic content area
 		this.contentContainer = new Container();
@@ -84,15 +87,15 @@ export class LoginDialogComponent extends Container implements Focusable {
 	showAuth(url: string, instructions?: string): void {
 		this.contentContainer.clear();
 		this.contentContainer.addChild(new Spacer(1));
-		this.contentContainer.addChild(new Text(theme.fg("accent", url), 1, 0));
+		this.contentContainer.addChild(new Text(theme.fg("accent", url), this.paddingText, 0));
 
 		const clickHint = process.platform === "darwin" ? "Cmd+click to open" : "Ctrl+click to open";
 		const hyperlink = `\x1b]8;;${url}\x07${clickHint}\x1b]8;;\x07`;
-		this.contentContainer.addChild(new Text(theme.fg("dim", hyperlink), 1, 0));
+		this.contentContainer.addChild(new Text(theme.fg("dim", hyperlink), this.paddingText, 0));
 
 		if (instructions) {
 			this.contentContainer.addChild(new Spacer(1));
-			this.contentContainer.addChild(new Text(theme.fg("warning", instructions), 1, 0));
+			this.contentContainer.addChild(new Text(theme.fg("warning", instructions), this.paddingText, 0));
 		}
 
 		// Try to open browser
@@ -107,9 +110,9 @@ export class LoginDialogComponent extends Container implements Focusable {
 	 */
 	showManualInput(prompt: string): Promise<string> {
 		this.contentContainer.addChild(new Spacer(1));
-		this.contentContainer.addChild(new Text(theme.fg("dim", prompt), 1, 0));
+		this.contentContainer.addChild(new Text(theme.fg("dim", prompt), this.paddingText, 0));
 		this.contentContainer.addChild(this.input);
-		this.contentContainer.addChild(new Text(`(${keyHint("tui.select.cancel", "to cancel")})`, 1, 0));
+		this.contentContainer.addChild(new Text(`(${keyHint("tui.select.cancel", "to cancel")})`, this.paddingText, 0));
 		this.tui.requestRender();
 
 		return new Promise((resolve, reject) => {
@@ -124,9 +127,9 @@ export class LoginDialogComponent extends Container implements Focusable {
 	 */
 	showPrompt(message: string, placeholder?: string): Promise<string> {
 		this.contentContainer.addChild(new Spacer(1));
-		this.contentContainer.addChild(new Text(theme.fg("text", message), 1, 0));
+		this.contentContainer.addChild(new Text(theme.fg("text", message), this.paddingText, 0));
 		if (placeholder) {
-			this.contentContainer.addChild(new Text(theme.fg("dim", `e.g., ${placeholder}`), 1, 0));
+			this.contentContainer.addChild(new Text(theme.fg("dim", `e.g., ${placeholder}`), this.paddingText, 0));
 		}
 		this.contentContainer.addChild(this.input);
 		this.contentContainer.addChild(
@@ -151,8 +154,8 @@ export class LoginDialogComponent extends Container implements Focusable {
 	 */
 	showWaiting(message: string): void {
 		this.contentContainer.addChild(new Spacer(1));
-		this.contentContainer.addChild(new Text(theme.fg("dim", message), 1, 0));
-		this.contentContainer.addChild(new Text(`(${keyHint("tui.select.cancel", "to cancel")})`, 1, 0));
+		this.contentContainer.addChild(new Text(theme.fg("dim", message), this.paddingText, 0));
+		this.contentContainer.addChild(new Text(`(${keyHint("tui.select.cancel", "to cancel")})`, this.paddingText, 0));
 		this.tui.requestRender();
 	}
 
@@ -160,7 +163,7 @@ export class LoginDialogComponent extends Container implements Focusable {
 	 * Called by onProgress callback
 	 */
 	showProgress(message: string): void {
-		this.contentContainer.addChild(new Text(theme.fg("dim", message), 1, 0));
+		this.contentContainer.addChild(new Text(theme.fg("dim", message), this.paddingText, 0));
 		this.tui.requestRender();
 	}
 
